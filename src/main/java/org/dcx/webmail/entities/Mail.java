@@ -1,8 +1,13 @@
 package org.dcx.webmail.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table (name = "mail")
@@ -22,10 +27,14 @@ public class Mail
     private Date dateSent = new Date ();
 
     @ManyToOne
+    @JoinColumn (name = "sender_id")
     private Account sender;
 
-    @ManyToOne
-    private Account receiver;
+    @ManyToMany
+    @JoinTable (name = "mail_receivers",
+                joinColumns = @JoinColumn (name = "mail_id", referencedColumnName = "id"),
+                inverseJoinColumns = @JoinColumn (name = "receiver_id", referencedColumnName = "id"))
+    private Set<Account> receivers;
 
     public Integer getId ()
     {
@@ -72,12 +81,12 @@ public class Mail
         this.sender = sender;
     }
 
-    public Account getReceiver ()
+    public Set<Account> getReceivers ()
     {
-        return receiver;
+        return receivers;
     }
-    public void setReceiver (Account receiver)
+    public void setReceivers (Set<Account> receivers)
     {
-        this.receiver = receiver;
+        this.receivers = receivers;
     }
 }

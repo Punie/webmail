@@ -1,6 +1,7 @@
 package org.dcx.webmail.controllers;
 
 import org.dcx.webmail.entities.Account;
+import org.dcx.webmail.entities.Mail;
 import org.dcx.webmail.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping ("api/accounts")
@@ -37,6 +39,26 @@ public class AccountResource
             return new ResponseEntity<> (HttpStatus.NOT_FOUND);
         else
             return new ResponseEntity<> (account, HttpStatus.OK);
+    }
+
+    @GetMapping (value = "{id}/received")
+    public ResponseEntity<Set<Mail>> getMailsReceived (@PathVariable ("id") Integer id)
+    {
+        Account account = accountService.getById (id);
+        if (account == null)
+            return new ResponseEntity<> (HttpStatus.NOT_FOUND);
+        else
+            return new ResponseEntity<> (account.getReceivedMails (), HttpStatus.OK);
+    }
+
+    @GetMapping (value = "{id}/sent")
+    public ResponseEntity<Set<Mail>> getMailsSent (@PathVariable ("id") Integer id)
+    {
+        Account account = accountService.getById (id);
+        if (account == null)
+            return new ResponseEntity<> (HttpStatus.NOT_FOUND);
+        else
+            return new ResponseEntity<> (account.getSentMails (), HttpStatus.OK);
     }
 
     @PutMapping (value = "{id}")

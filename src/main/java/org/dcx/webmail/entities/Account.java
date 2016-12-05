@@ -1,11 +1,11 @@
 package org.dcx.webmail.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table (name = "account")
@@ -31,13 +31,13 @@ public class Account
     @Column (name = "date_registered")
     private Date dateRegistered = new Date ();
 
-    @OneToMany
+    @OneToMany (mappedBy = "sender", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<Mail> sentMails;
+    private Set<Mail> sentMails;
 
-    @OneToMany
+    @ManyToMany (mappedBy = "receivers", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<Mail> receivedMails;
+    private Set<Mail> receivedMails;
 
     public Integer getId ()
     {
@@ -84,20 +84,20 @@ public class Account
         this.dateRegistered = dateRegistered;
     }
 
-    public List<Mail> getSentMails ()
+    public Set<Mail> getSentMails ()
     {
         return sentMails;
     }
-    public void setSentMails (List<Mail> sentMails)
+    public void setSentMails (Set<Mail> sentMails)
     {
         this.sentMails = sentMails;
     }
 
-    public List<Mail> getReceivedMails ()
+    public Set<Mail> getReceivedMails ()
     {
         return receivedMails;
     }
-    public void setReceivedMails (List<Mail> receivedMails)
+    public void setReceivedMails (Set<Mail> receivedMails)
     {
         this.receivedMails = receivedMails;
     }

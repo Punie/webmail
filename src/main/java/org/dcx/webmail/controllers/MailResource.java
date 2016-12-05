@@ -50,7 +50,7 @@ public class MailResource
         mailData.setSubject (mail.getSubject ());
         mailData.setBody (mail.getBody ());
         mailData.setSender (mail.getSender ());
-        mailData.setReceiver (mail.getReceiver ());
+        mailData.setReceivers (mail.getReceivers ());
 
         Mail updatedMail = mailService.save (mailData);
 

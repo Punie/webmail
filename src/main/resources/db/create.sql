@@ -10,6 +10,7 @@ CACHE 1;
 ALTER SEQUENCE public.hibernate_sequence
 OWNER TO webmail;
 
+DROP TABLE IF EXISTS mail_receivers;
 DROP TABLE IF EXISTS mail;
 DROP TABLE IF EXISTS account;
 
@@ -18,7 +19,7 @@ CREATE TABLE account (
   username VARCHAR(255),
   firstname VARCHAR(255),
   lastname VARCHAR(255),
-  date_registered DATE
+  date_registered TIMESTAMP
 );
 
 CREATE TABLE mail (
@@ -26,14 +27,22 @@ CREATE TABLE mail (
   subject VARCHAR(255),
   body VARCHAR(255),
   sender_id INT,
-  receiver_id INT,
-  date_sent DATE
+  date_sent TIMESTAMP
+);
+
+CREATE TABLE mail_receivers (
+  mail_id INT NOT NULL,
+  receiver_id INT NOT NULL,
+  PRIMARY KEY (mail_id, receiver_id)
 );
 
 ALTER TABLE mail
     ADD CONSTRAINT FK_SENDER FOREIGN KEY (sender_id) REFERENCES account(id);
 
-ALTER TABLE mail
+ALTER TABLE mail_receivers
+    ADD CONSTRAINT FK_MAIL FOREIGN KEY (mail_id) REFERENCES mail(id);
+
+ALTER TABLE mail_receivers
     ADD CONSTRAINT FK_RECEIVER FOREIGN KEY (receiver_id) REFERENCES account(id);
 
 ALTER TABLE account
