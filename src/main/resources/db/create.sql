@@ -26,7 +26,7 @@ CREATE TABLE account (
 CREATE TABLE mail (
   id SERIAL PRIMARY KEY,
   subject VARCHAR(255),
-  body VARCHAR(255),
+  body TEXT,
   sender_id INT,
   date_sent TIMESTAMP
 );
