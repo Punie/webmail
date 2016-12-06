@@ -19,18 +19,21 @@ public class AccountResource
     @Autowired
     AccountService accountService;
 
+    @CrossOrigin
     @GetMapping
     public List<?> getAllAccounts ()
     {
         return accountService.listAll ();
     }
 
+    @CrossOrigin
     @PostMapping
     public Account createAccount (@Valid @RequestBody Account account)
     {
         return accountService.save (account);
     }
 
+    @CrossOrigin
     @GetMapping (value = "{id}")
     public ResponseEntity<Account> getAccountById (@PathVariable ("id") Integer id)
     {
@@ -41,6 +44,7 @@ public class AccountResource
             return new ResponseEntity<> (account, HttpStatus.OK);
     }
 
+    @CrossOrigin
     @GetMapping (value = "{id}/received")
     public ResponseEntity<Set<Mail>> getMailsReceived (@PathVariable ("id") Integer id)
     {
@@ -51,6 +55,7 @@ public class AccountResource
             return new ResponseEntity<> (account.getReceivedMails (), HttpStatus.OK);
     }
 
+    @CrossOrigin
     @GetMapping (value = "{id}/sent")
     public ResponseEntity<Set<Mail>> getMailsSent (@PathVariable ("id") Integer id)
     {
@@ -61,6 +66,7 @@ public class AccountResource
             return new ResponseEntity<> (account.getSentMails (), HttpStatus.OK);
     }
 
+    @CrossOrigin
     @PutMapping (value = "{id}")
     public ResponseEntity<Account> updateAccount (@Valid @RequestBody Account account,
                                                   @PathVariable ("id") Integer id)
@@ -70,6 +76,7 @@ public class AccountResource
             return new ResponseEntity<> (HttpStatus.NOT_FOUND);
 
         accountData.setUsername (account.getUsername ());
+        accountData.setPassword (account.getPassword ());
         accountData.setFirstname (account.getFirstname ());
         accountData.setLastname (account.getLastname ());
 
@@ -78,6 +85,7 @@ public class AccountResource
         return new ResponseEntity<> (updatedAccount, HttpStatus.OK);
     }
 
+    @CrossOrigin
     @DeleteMapping (value = "{id}")
     public void deleteAccount (@PathVariable ("id") Integer id)
     {

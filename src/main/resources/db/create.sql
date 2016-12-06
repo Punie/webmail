@@ -17,6 +17,7 @@ DROP TABLE IF EXISTS account;
 CREATE TABLE account (
   id SERIAL PRIMARY KEY,
   username VARCHAR(255),
+  password VARCHAR(255),
   firstname VARCHAR(255),
   lastname VARCHAR(255),
   date_registered TIMESTAMP

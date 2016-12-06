@@ -17,18 +17,21 @@ public class MailResource
     @Autowired
     MailService mailService;
 
+    @CrossOrigin
     @GetMapping
     public List<?> getAllMails ()
     {
         return mailService.listAll ();
     }
 
+    @CrossOrigin
     @PostMapping
     public Mail createMail (@Valid @RequestBody Mail mail)
     {
         return mailService.save (mail);
     }
 
+    @CrossOrigin
     @GetMapping (value = "{id}")
     public ResponseEntity<Mail> getMailById (@PathVariable ("id") Integer id)
     {
@@ -39,6 +42,7 @@ public class MailResource
             return new ResponseEntity<> (mail, HttpStatus.OK);
     }
 
+    @CrossOrigin
     @PutMapping (value = "{id}")
     public ResponseEntity<Mail> updateMail (@Valid @RequestBody Mail mail,
                                                   @PathVariable ("id") Integer id)
@@ -57,6 +61,7 @@ public class MailResource
         return new ResponseEntity<> (updatedMail, HttpStatus.OK);
     }
 
+    @CrossOrigin
     @DeleteMapping (value = "{id}")
     public void deleteMail (@PathVariable ("id") Integer id)
     {
