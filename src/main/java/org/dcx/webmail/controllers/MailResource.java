@@ -5,6 +5,7 @@ import org.dcx.webmail.services.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,16 +20,23 @@ public class MailResource
 
     @CrossOrigin
     @GetMapping
-    public List<?> getAllMails ()
+    public ResponseEntity<List<?>> getAllMails ()
     {
-        return mailService.listAll ();
+        List<?> mailList = mailService.listAll ();
+        if (mailList == null)
+            return new ResponseEntity<> (HttpStatus.NOT_FOUND);
+        return new ResponseEntity<> (mailList, HttpStatus.OK);
     }
 
     @CrossOrigin
     @PostMapping
-    public Mail createMail (@Valid @RequestBody Mail mail)
+    public ResponseEntity<Mail> createMail (@Valid @RequestBody Mail mail,
+                                            BindingResult bindingResult)
     {
-        return mailService.save (mail);
+        if (bindingResult.hasErrors ())
+            return new ResponseEntity<> (HttpStatus.BAD_REQUEST);
+        Mail savedMail = mailService.save (mail);
+        return new ResponseEntity<> (savedMail, HttpStatus.CREATED);
     }
 
     @CrossOrigin
@@ -38,8 +46,7 @@ public class MailResource
         Mail mail = mailService.getById (id);
         if (mail == null)
             return new ResponseEntity<> (HttpStatus.NOT_FOUND);
-        else
-            return new ResponseEntity<> (mail, HttpStatus.OK);
+        return new ResponseEntity<> (mail, HttpStatus.OK);
     }
 
     @CrossOrigin
@@ -63,8 +70,11 @@ public class MailResource
 
     @CrossOrigin
     @DeleteMapping (value = "{id}")
-    public void deleteMail (@PathVariable ("id") Integer id)
+    public ResponseEntity<Void> deleteMail (@PathVariable ("id") Integer id)
     {
+        if (mailService.getById (id) == null)
+            return new ResponseEntity<> (HttpStatus.NOT_FOUND);
         mailService.delete (id);
+        return new ResponseEntity<> (HttpStatus.OK);
     }
 }

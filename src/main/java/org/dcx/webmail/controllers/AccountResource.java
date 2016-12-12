@@ -6,6 +6,7 @@ import org.dcx.webmail.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,16 +22,25 @@ public class AccountResource
 
     @CrossOrigin
     @GetMapping
-    public List<?> getAllAccounts ()
+    public ResponseEntity<List<?>> getAllAccounts ()
     {
-        return accountService.listAll ();
+        List<?> accountList = accountService.listAll ();
+        if (accountList == null)
+            return new ResponseEntity<> (HttpStatus.NOT_FOUND);
+        return new  ResponseEntity<> (accountList, HttpStatus.OK);
     }
 
     @CrossOrigin
     @PostMapping
-    public Account createAccount (@Valid @RequestBody Account account)
+    public ResponseEntity<Account> createAccount (@Valid @RequestBody Account account,
+                                                  BindingResult bindingResult)
     {
-        return accountService.save (account);
+        if (bindingResult.hasErrors ())
+            return new ResponseEntity<> (HttpStatus.BAD_REQUEST);
+        if (accountService.getByUsername (account.getUsername ()) != null)
+            return new ResponseEntity<> (HttpStatus.CONFLICT);
+        Account savedAccount = accountService.save (account);
+        return new ResponseEntity<> (savedAccount, HttpStatus.CREATED);
     }
 
     @CrossOrigin
@@ -40,8 +50,7 @@ public class AccountResource
         Account account = accountService.getById (id);
         if (account == null)
             return new ResponseEntity<> (HttpStatus.NOT_FOUND);
-        else
-            return new ResponseEntity<> (account, HttpStatus.OK);
+        return new ResponseEntity<> (account, HttpStatus.OK);
     }
 
     @CrossOrigin
@@ -51,8 +60,7 @@ public class AccountResource
         Account account = accountService.getById (id);
         if (account == null)
             return new ResponseEntity<> (HttpStatus.NOT_FOUND);
-        else
-            return new ResponseEntity<> (account.getReceivedMails (), HttpStatus.OK);
+        return new ResponseEntity<> (account.getReceivedMails (), HttpStatus.OK);
     }
 
     @CrossOrigin
@@ -62,8 +70,7 @@ public class AccountResource
         Account account = accountService.getById (id);
         if (account == null)
             return new ResponseEntity<> (HttpStatus.NOT_FOUND);
-        else
-            return new ResponseEntity<> (account.getSentMails (), HttpStatus.OK);
+        return new ResponseEntity<> (account.getSentMails (), HttpStatus.OK);
     }
 
     @CrossOrigin
@@ -87,8 +94,11 @@ public class AccountResource
 
     @CrossOrigin
     @DeleteMapping (value = "{id}")
-    public void deleteAccount (@PathVariable ("id") Integer id)
+    public ResponseEntity<Void> deleteAccount (@PathVariable ("id") Integer id)
     {
+        if (accountService.getById (id) == null)
+            return new ResponseEntity<> (HttpStatus.NOT_FOUND);
         accountService.delete (id);
+        return new ResponseEntity<> (HttpStatus.OK);
     }
 }
