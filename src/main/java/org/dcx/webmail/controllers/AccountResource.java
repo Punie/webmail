@@ -27,6 +27,7 @@ public class AccountResource
         List<?> accountList = accountService.listAll ();
         if (accountList == null)
             return new ResponseEntity<> (HttpStatus.NOT_FOUND);
+
         return new  ResponseEntity<> (accountList, HttpStatus.OK);
     }
 
@@ -37,8 +38,10 @@ public class AccountResource
     {
         if (bindingResult.hasErrors ())
             return new ResponseEntity<> (HttpStatus.BAD_REQUEST);
+
         if (accountService.getByUsername (account.getUsername ()) != null)
             return new ResponseEntity<> (HttpStatus.CONFLICT);
+
         Account savedAccount = accountService.save (account);
         return new ResponseEntity<> (savedAccount, HttpStatus.CREATED);
     }
@@ -60,6 +63,7 @@ public class AccountResource
         Account account = accountService.getById (id);
         if (account == null)
             return new ResponseEntity<> (HttpStatus.NOT_FOUND);
+
         return new ResponseEntity<> (account.getReceivedMails (), HttpStatus.OK);
     }
 
@@ -70,14 +74,19 @@ public class AccountResource
         Account account = accountService.getById (id);
         if (account == null)
             return new ResponseEntity<> (HttpStatus.NOT_FOUND);
+
         return new ResponseEntity<> (account.getSentMails (), HttpStatus.OK);
     }
 
     @CrossOrigin
     @PutMapping (value = "{id}")
     public ResponseEntity<Account> updateAccount (@Valid @RequestBody Account account,
-                                                  @PathVariable ("id") Integer id)
+                                                  @PathVariable ("id") Integer id,
+                                                  BindingResult bindingResult)
     {
+        if (bindingResult.hasErrors ())
+            return new ResponseEntity<> (HttpStatus.BAD_REQUEST);
+
         Account accountData = accountService.getById (id);
         if (accountData == null)
             return new ResponseEntity<> (HttpStatus.NOT_FOUND);
@@ -98,6 +107,7 @@ public class AccountResource
     {
         if (accountService.getById (id) == null)
             return new ResponseEntity<> (HttpStatus.NOT_FOUND);
+
         accountService.delete (id);
         return new ResponseEntity<> (HttpStatus.OK);
     }

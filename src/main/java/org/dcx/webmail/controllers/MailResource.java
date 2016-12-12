@@ -25,6 +25,7 @@ public class MailResource
         List<?> mailList = mailService.listAll ();
         if (mailList == null)
             return new ResponseEntity<> (HttpStatus.NOT_FOUND);
+
         return new ResponseEntity<> (mailList, HttpStatus.OK);
     }
 
@@ -35,6 +36,7 @@ public class MailResource
     {
         if (bindingResult.hasErrors ())
             return new ResponseEntity<> (HttpStatus.BAD_REQUEST);
+
         Mail savedMail = mailService.save (mail);
         return new ResponseEntity<> (savedMail, HttpStatus.CREATED);
     }
@@ -46,14 +48,19 @@ public class MailResource
         Mail mail = mailService.getById (id);
         if (mail == null)
             return new ResponseEntity<> (HttpStatus.NOT_FOUND);
+
         return new ResponseEntity<> (mail, HttpStatus.OK);
     }
 
     @CrossOrigin
     @PutMapping (value = "{id}")
     public ResponseEntity<Mail> updateMail (@Valid @RequestBody Mail mail,
-                                                  @PathVariable ("id") Integer id)
+                                            @PathVariable ("id") Integer id,
+                                            BindingResult bindingResult)
     {
+        if (bindingResult.hasErrors ())
+            return new ResponseEntity<> (HttpStatus.BAD_REQUEST);
+
         Mail mailData = mailService.getById (id);
         if (mailData == null)
             return new ResponseEntity<> (HttpStatus.NOT_FOUND);
@@ -74,6 +81,7 @@ public class MailResource
     {
         if (mailService.getById (id) == null)
             return new ResponseEntity<> (HttpStatus.NOT_FOUND);
+
         mailService.delete (id);
         return new ResponseEntity<> (HttpStatus.OK);
     }
